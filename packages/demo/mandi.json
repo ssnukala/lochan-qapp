@@ -1,0 +1,21 @@
+{
+  "name": "demo",
+  "version": "0.1.0",
+  "label": "Demo",
+  "app": {
+    "name": "Demo",
+    "tagline": "Your first Lochan package",
+    "logo_color": "#0d47a1"
+  },
+  "description": "Starter domain package for a new Lochan app. Rename it, or delete it and author your own alongside.",
+  "requires": [],
+  "tier": "domain",
+  "category": "starter",
+  "tags": ["starter", "example"],
+  "icon": "Widgets",
+  "backend": {
+    "module": "demo",
+    "entry_point": "demo.package"
+  },
+  "has_seeds": false
+}

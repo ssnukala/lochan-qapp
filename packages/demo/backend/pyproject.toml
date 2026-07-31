@@ -1,0 +1,30 @@
+[project]
+name = "demo"
+version = "0.1.0"
+description = "Starter domain package for a new Lochan app"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+# How the framework discovers this package at runtime.
+[project.entry-points."lochan.packages"]
+demo = "demo"
+
+[tool.setuptools.packages.find]
+include = ["demo*"]
+
+# mandi.json lives beside the module and must ship with the wheel — but note
+# that a wheel still does NOT carry the sibling data/embed-artifacts/ tree,
+# which is why a Lochan package travels as a git working tree.
+[tool.setuptools.package-data]
+"demo" = [
+    "mandi.json",
+]

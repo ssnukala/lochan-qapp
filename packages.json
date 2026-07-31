@@ -1,8 +1,8 @@
 {
-  "primary": "myapp",
+  "primary": "demo",
   "packages": {
-    "myapp": {
-      "image": "myapp:latest"
+    "demo": {
+      "image": "demo:latest"
     }
   }
 }

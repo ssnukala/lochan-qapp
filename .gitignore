@@ -1,6 +1,40 @@
+# Bootstrap + app-tier secrets — NEVER commit
 .env
-.daksh/
-__pycache__/
-*.pyc
-node_modules/
+.env.*
+!.env.example
+
+# Private keys
+*.pem
+*.key
+*.priv
+**/keys/*.priv
+
+# Docker volumes + caches
+**/postgres-data/
+**/pgdata/
+
+# Logs
+**/log/
+*.log
+
+# OS / editor
 .DS_Store
+.vscode/
+.idea/
+*.swp
+
+# ── Generator output — NEVER commit ──────────────────────────────────────────
+# `setup.sh` regenerates all of these from packages.json using the framework's
+# own generator. Committing them would create a second definition that drifts
+# from what the framework emits.
+compose.yml
+compose.dev.yml
+compose.dev.override.yml
+compose.staging.yml
+Dockerfile.deps
+Dockerfile.backend
+Dockerfile.frontend
+build-app.sh
+nginx/
+nginx.frontend.conf
+log/

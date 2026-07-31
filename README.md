@@ -1,54 +1,85 @@
-# lochan-qapp — your first Lochan app
+# lochan-qapp
 
-> ## ⚠ Status — not yet working end-to-end
->
-> This repo is public so the shape can be reviewed, **but the quickstart below
-> does not work yet.** Three things are still in flight:
->
-> - the Lochan base images are **not published** — `docker compose up` cannot
->   pull them yet
-> - `daksh scaffold` does not currently run, so `packages/<name>/` must be
->   authored by hand
-> - `daksh install` does not yet work from inside the image without a
->   development checkout
->
-> Each is being fixed and walked from a clean clone before this notice is
-> removed. **Until it is, treat every step here as unverified.**
+Your first [Lochan](https://lochan.ai) application — a starter repo you clone,
+rename, and author into.
 
-Clone this repo, point it at your config, and bring the app up. The Lochan
-runtime itself ships as a **container image**; this repo carries only the
-*recipe* — a compose file, your environment, and the declaration of which
-Lochan packages your app is composed from.
+Every command below has been run. If one fails for you, that is a bug in this
+repo, not a step you did wrong — please open an issue.
+
+## Quick start
 
 ```bash
-git clone https://github.com/ssnukala/lochan-qapp myapp
-cd myapp
-cp .env.example .env      # edit: DB credentials, ports, LOCHAN_LICENSE_KEY
-docker compose up
+git clone https://github.com/ssnukala/lochan-qapp.git my-app
+cd my-app
+
+./bootstrap.sh          # generates .env with three fresh secrets
+docker compose up -d
 ```
 
-## What is in here
+Then open <http://localhost:3000>, and check the backend is healthy:
 
-| Path | What it is |
+```bash
+curl http://localhost:8000/api/health
+```
+
+### What `bootstrap.sh` does
+
+It copies `.env.example` to `.env` and fills in the three bootstrap secrets:
+
+| Key | Generated with |
 |---|---|
-| `compose.yml` | Pulls the Lochan base images and wires your app |
-| `.env.example` | Every setting the app needs — copy to `.env` and edit |
-| `packages.json` | **Which Lochan packages your app is composed from** |
-| `packages/` | Your own domain package(s) live here — see `packages/README.md` |
-| `data/` | Runtime + seed data, incl. embedding artifacts — see `data/README.md` |
+| `POSTGRES_PASSWORD` | `openssl rand -base64 24`, stripped of `/+=` so it is safe inside the database URL |
+| `ENCRYPTION_KEY` | `openssl rand -base64 32`, translated to URL-safe base64 (Fernet requires this) |
+| `JWT_SECRET` | `openssl rand -base64 32` |
 
-## Composing your app from packages
+It depends on `openssl` only — no Python needed on your machine. It writes
+`.env` with mode `600`, and **refuses to overwrite an existing `.env`**, because
+rotating `ENCRYPTION_KEY` makes anything already encrypted unreadable.
 
-`packages.json` declares the package set. Each entry names an **image** to
-pull; a `dev` path is for in-monorepo development only and is not used here.
+`.env` is gitignored. `.env.example` is not — that is the template you copy.
 
-```json
-{
-  "primary": "myapp",
-  "packages": {
-    "myapp":   { "image": "myapp:latest" },
-    "grahaka": { "image": "ghcr.io/ssnukala/lochan-grahaka:latest" }
-  }
-}
+## Layout
+
+```
+packages/<name>/        your package — this is what you author
+  mandi.json            package manifest (name, tier, entry points)
+  backend/<module>/     your Python module
+  data/embed-artifacts/ embedding artifacts, loaded relative to the module
+data/                   app-level data
+packages.json           which packages this app runs, and where they live
+compose.yml             pulls the framework images from ghcr.io
+.env.example            the template bootstrap.sh copies
 ```
 
+**Why `packages/<name>/` is a real directory rather than a dependency:** a
+`pip install` delivers only the Python distribution. It does not carry the
+sibling `data/embed-artifacts/*.npz`, the `frontend/`, or the root
+`mandi.json` — and the embedding artifacts are loaded on a path relative to
+your module, so chat and search do not work without them. The unit that
+travels is the working tree, so you clone it.
+
+The path `packages/<name>/` maps one-to-one onto `/app/packages/<name>/` inside
+the image. Your development tree and the image tree are the same shape, which
+is why `packages.json` points at `./packages/<name>` rather than anywhere else.
+
+## Adding a package
+
+`packages/demo/` is a starting point — rename it, or delete it and author your
+own alongside. Edit `packages.json` so `primary` names the package you want the
+app to serve.
+
+## Secrets beyond the bootstrap three
+
+`.env` holds only the three values above. Everything else — LLM API keys, OAuth
+credentials, SMTP passwords — belongs in LOCKBOX, encrypted at rest:
+
+```bash
+daksh secrets push <app> --key CLAUDE_API_KEY --value -
+daksh secrets list <app>          # names only, never values
+```
+
+## Requirements
+
+- Docker with Compose
+- `openssl` (present on macOS, Linux, and Git Bash)
+- `git`
