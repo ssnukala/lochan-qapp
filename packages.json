@@ -1,0 +1,8 @@
+{
+  "primary": "myapp",
+  "packages": {
+    "myapp": {
+      "image": "myapp:latest"
+    }
+  }
+}
