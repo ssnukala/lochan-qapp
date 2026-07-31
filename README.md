@@ -37,6 +37,17 @@ pull; a `dev` path is for in-monorepo development only and is not used here.
 }
 ```
 
-> **Status:** this repo is under active construction. The steps above are being
-> validated end-to-end from a clean clone before it is published; until then,
-> treat anything here as unverified.
+> ## ⚠ Status — not yet working end-to-end
+>
+> This repo is public so the shape can be reviewed, **but the quickstart above
+> does not work yet.** Three things are still in flight:
+>
+> - the Lochan base images are **not published** — `docker compose up` cannot
+>   pull them yet
+> - `daksh scaffold` does not currently run, so `packages/<name>/` must be
+>   authored by hand
+> - `daksh install` does not yet work from inside the image without a
+>   development checkout
+>
+> Each is being fixed and walked from a clean clone before this notice is
+> removed. **Until it is, treat every step here as unverified.**
