@@ -7,6 +7,6 @@ LABEL org.lochan.patent.filing="FP11"
 LABEL org.lochan.patent.filing_date="2026-04-19"
 LABEL org.lochan.patent.claims="33"
 LABEL org.lochan.patent.status="filed"
-LABEL org.opencontainers.image.source="https://github.com/lochanor/lochan-qapp"
+LABEL org.opencontainers.image.source="https://github.com/gyanamlabs/lochan-qapp"
 LABEL org.opencontainers.image.licenses="MIT"
 COPY . /pkg/

@@ -9,7 +9,7 @@ repo, not a step you did wrong — please open an issue.
 ## Quick start
 
 ```bash
-git clone https://github.com/lochanor/lochan-qapp.git my-app
+git clone https://github.com/gyanamlabs/lochan-qapp.git my-app
 cd my-app
 
 ./bootstrap.sh          # generates .env with three fresh secrets
